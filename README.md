@@ -36,4 +36,21 @@ verification which aren't available natively to the contract and can't be trustl
 such parameters would be immutable because they are a part of the bytecode committed to in the contract address -
 barring some logic in the contract which somehow sources them from elsewhere.
 
+### ZK Circuit
 
+The ZK circuit for this scheme should be as generic as possible, so as to encourage users to not differentiate
+themselves from each other through the use of distinct verifier parameters or bytecode. The claim proven through this
+circuit should be as simple as that the prover knows the preimage to the commitment used as the salt in the original
+`CREATE2` operation.
+
+An example circuit is provided in [consume.circom](circuits/consume.circom). This circuit takes as private inputs the
+deploying address, bytecode hash, and salt commitment preimage ("secret"). As public inputs, the circuit takes an
+arbitrary "external data hash" representing a commitment to any other parameters to the overlying contract call which
+should not be malleable relative to the proof (to prevent replay/frontrunning attacks). The public output of the circuit
+is the contract address computed from the private inputs.
+
+### Verifier
+
+The contract verifier should accept as inputs a proof, as well as any other parameters necessary to drain itself of
+all supported assets (e.g. a destination contract). The verifier should compute the hash of those additional parameters,
+and then verify the proof using the contract address and parameter hash as pairing values.
