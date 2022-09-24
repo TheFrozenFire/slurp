@@ -23,3 +23,17 @@ parameters to address generation.
 Given known init code, a deployer contract whose address is stable, and the use of the salt parameter as a commitment,
 a private recipient may generate a contract address which can be provided to a sender. The sender may send assets to
 this uninitialized address, to be later collected by the recipient.
+
+## Contract Logic
+
+In this scheme, a PRA would be a gas-optimized smart contract which need not persist longer than its creation, whose
+purpose is to transfer the sum of its assets to any address specified by a caller which can prove knowledge of the
+preimage of the commitment specified as the contract creation salt.
+
+Assuming a standardized form of this contract, most of the bytecode supplied in the contract initialization would be
+linking to an existing on-chain library describing the base contract logic, and providing any parameters for the proof
+verification which aren't available natively to the contract and can't be trustlessly supplied by the caller. Any
+such parameters would be immutable because they are a part of the bytecode committed to in the contract address -
+barring some logic in the contract which somehow sources them from elsewhere.
+
+
