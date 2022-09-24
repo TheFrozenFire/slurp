@@ -1,0 +1,27 @@
+{
+  "name": "slurp",
+  "version": "1.0.0",
+  "description": "ZKAA Private Recipient Addresses",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheFrozenFire/slurp.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheFrozenFire/slurp/issues"
+  },
+  "homepage": "https://github.com/TheFrozenFire/slurp#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "hardhat": "^2.11.2"
+  },
+  "dependencies": {
+    "circomlib": "^2.0.5",
+    "keccak-circom": "github:vocdoni/keccak256-circom"
+  }
+}
