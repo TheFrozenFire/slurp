@@ -1,7 +1,8 @@
-pragma circom 2.0.9;
+pragma circom 2.0.6;
 
 include "../node_modules/keccak-circom/circuits/keccak.circom";
 include "../node_modules/circomlib/circuits/poseidon.circom";
+include "../node_modules/circomlib/circuits/bitify.circom";
 
 template CREATE2Address() {
     signal input deployingAddress;
@@ -15,32 +16,33 @@ template CREATE2Address() {
     
     var addressLength = 12;
     
+    var i;
     var offset = 0;
     
     component keccak256 = Keccak(inLength * 8, 256);
     
-    for(var i = 0; i < 8; i++) {
+    for(i = 0; i < 8; i++) {
         keccak256.in[i] <== 1; // 0xff
     }
     offset = i;
     
     component deployingAddressBits = Num2Bits(20*8); // 20-byte address
     deployingAddressBits.in <== deployingAddress;
-    for(; i < offset + 160; i++) {
+    for(i=i; i < offset + 160; i++) {
         keccak256.in[i] <== deployingAddressBits.out[i - offset];
     }
     offset = i;
     
     component saltBits = Num2Bits(32*8); // 32-byte salt
     saltBits.in <== salt;
-    for(; i < offset + 256; i++) {
+    for(i=i; i < offset + 256; i++) {
         keccak256.in[i] <== saltBits.out[i - offset];
     }
     offset = i;
     
     component bCodeHashBits = Num2Bits(32*8); // 32-byte init code hash
     bCodeHashBits.in <== bCodeHash;
-    for(; i < offset + 256; i++) {
+    for(i=i; i < offset + 256; i++) {
         keccak256.in[i] <== bCodeHashBits.out[i - offset];
     }
     
@@ -63,7 +65,7 @@ template Consume() {
     signal output address;
     
     component salt = Poseidon(1);
-    salt.in <== secret;
+    salt.inputs[0] <== secret;
 
     component contractAddress = CREATE2Address();
     contractAddress.deployingAddress <== deployingAddress;
@@ -74,3 +76,5 @@ template Consume() {
     
     signal extDataSquare <== extDataHash * extDataHash;
 }
+
+component main { public [extDataHash] } = Consume();
